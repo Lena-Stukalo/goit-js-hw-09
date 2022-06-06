@@ -1,6 +1,15 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
+const refs = {
+  dateInput: document.querySelector('#datetime-picker'),
+  startButton: document.querySelector('[data-start]'),
+  dataDays: document.querySelector('[data-days]'),
+  dataHours: document.querySelector('[data-hours]'),
+  dataMinutes: document.querySelector('[data-minutes]'),
+  dataSeconds: document.querySelector('[data-seconds]'),
+};
+
 const options = {
   enableTime: true,
   time_24hr: true,
@@ -11,16 +20,9 @@ const options = {
     onSelectDatePicker(selectedDates[0]);
   },
 };
-const refs = {
-  dateInput: document.querySelector('#datetime-picker'),
-  startButton: document.querySelector('[data-start]'),
-  dataDays: document.querySelector('[data-days]'),
-  dataHours: document.querySelector('[data-hours]'),
-  dataMinutes: document.querySelector('[data-minutes]'),
-  dataSeconds: document.querySelector('[data-seconds]'),
-};
-let callender = flatpickr(refs.dateInput, options);
 let timerID = null;
+let callender = flatpickr(refs.dateInput, options);
+
 refs.startButton.disabled = true;
 
 function onSelectDatePicker(selectDate) {
@@ -30,9 +32,6 @@ function onSelectDatePicker(selectDate) {
     return;
   }
   refs.startButton.disabled = false;
-  if (timerID) {
-    clearInterval(timerID);
-  }
   refs.startButton.addEventListener('click', onStartButtonClick);
 
   function onStartButtonClick(e) {
@@ -46,9 +45,6 @@ function onSelectDatePicker(selectDate) {
 function timer(selectDate) {
   timerID = setInterval(() => {
     const deltaTime = delta(selectDate);
-    if (deltaTime < 1000) {
-      clearInterval(timerID);
-    }
     const timeObj = convertMs(deltaTime);
     onTimerDraw(timeObj);
   }, 1000);
@@ -56,6 +52,10 @@ function timer(selectDate) {
 
 function delta(future) {
   const date = new Date();
+  if (future.getTime() - date.getTime() < 1000) {
+    clearInterval(timerID);
+    return 0;
+  }
   return future.getTime() - date.getTime();
 }
 
