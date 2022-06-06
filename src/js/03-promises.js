@@ -1,5 +1,4 @@
-let delayCounter = 3000;
-
+let delayCounter = null;
 const refs = {
   delay: document.querySelector('[name="delay"]'),
   step: document.querySelector('[name="step"]'),
@@ -25,14 +24,23 @@ function createPromise(position, delay) {
 
 function onFormSubmit(event) {
   event.preventDefault();
-
-  // for (let amountCounter = 1; amountCounter <= 5; amountCounter += 1) {
-  //   createPromise(amountCounter, delayCounter)
-  //     .then(({ position, delay }) => {
-  //       console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-  //     })
-  //     .catch(({ position, delay }) => {
-  //       console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-  //     });
-  // }
+  const {
+    elements: { delay, amount, step },
+  } = event.currentTarget;
+  console.log();
+  delayCounter = Number(delay.value);
+  for (
+    let amountCounter = 1;
+    amountCounter <= Number(amount.value);
+    amountCounter += 1
+  ) {
+    createPromise(amountCounter, delayCounter)
+      .then(({ position, delay }) => {
+        console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+      })
+      .catch(({ position, delay }) => {
+        console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+      });
+    delayCounter += Number(step.value);
+  }
 }
